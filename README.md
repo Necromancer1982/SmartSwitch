@@ -10,7 +10,7 @@ Im zweiten Schritt möchte wir diese *smart* steuern können.
 
 Inspiriert durch Leo-Andres Hofmann's 230V I/O Modul für ESP8266 ([LUANI](https://luani.de/projekte/esp8266-hvio/)), machte ich mich an die Entwicklung eines eigenen I/O-Moduls zur Abfrage der Rolladentaster bzw. Steuerung des Rolladenmotors. Basis des Moduls ist der ESP-12F, ein integriertes WLAN-Modul, welches über zwei Wechslerrelais die eigentliche Steuerung des Motors übernimmt.
 
-Bedient wird das Modul entweder vor Ort, über die bereits vorhandenen Wandtaster, oder mittles MQTT-Befehle über WLAN, zentral gesteuert über [OpenHab2](https://docs.openhab.org/index.html) auf meinem Raspberry Pi Zero W. Damit ist beispielsweise auch eine Steuerung der Rolläden in Abhängligkeit von Zeiten oder des aktuellen Sonnenaufgang bzw. Sonnenuntergang ([Astro Bindings](https://docs.openhab.org/addons/bindings/astro/readme.html)) möglich.
+Bedient wird das Modul entweder vor Ort, über die bereits vorhandenen Wandtaster, oder mittles MQTT-Befehle über WLAN, zentral gesteuert über [OpenHab2](https://docs.openhab.org/index.html) auf meinem Raspberry Pi Zero W. Damit ist beispielsweise auch eine Steuerung der Rolläden in Abhängligkeit von Zeiten oder Events beispielsweise dem Zeitpunkt des aktuellen Sonnenaufgangs bzw. Sonnenuntergangs ([Astro Bindings](https://docs.openhab.org/addons/bindings/astro/readme.html)) möglich. Auch eine Automatische Abschattun in Abhängigkeit des Sonnenwinkels, der aktuellen Globalstrahlung der Sonne und der Außen- bzw. Raumtemperatur wäre denkbar. 
 
 ![PCB Top](/images/Top.png)   ![PCB Bottom](/images/Bottom.png)
 
