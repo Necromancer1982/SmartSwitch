@@ -3,8 +3,8 @@
 
 **Vision**
 
-Im Zuge des Neubaus unseres Hauses entschieden wir uns für elektrische Rolläden. Dise wurden im ersten Schritt lediglich mit konventionellen Rolladen-Tastern, direkt neben dem jeweiligen Fenster, ausgestattet.
-Im zweiten Schritt möchte ich diese *smart* steuern können.
+Im Zuge des Neubaus unseres Hauses entschieden wir uns für elektrische Rolläden. Diese wurden im ersten Schritt lediglich mit konventionellen Rolladen-Tastern, direkt neben dem jeweiligen Fenster, ausgestattet.
+Im zweiten Schritt möchte wir diese *smart* steuern können.
 
 ![SmartSwitch Modul](/images/SmartSwitch.jpg)
 
@@ -13,3 +13,14 @@ Inspiriert durch Leo-Andres Hofmann's 230V I/O Modul für ESP8266 ([LUANI](https
 Bedient wird das Modul entweder vor Ort, über die bereits vorhandenen Wandtaster, oder mittles MQTT-Befehle über WLAN, zentral gesteuert über [OpenHab2](https://docs.openhab.org/index.html) auf meinem Raspberry Pi Zero W. Damit ist beispielsweise auch eine Steuerung der Rolläden in Abhängligkeit von Zeiten oder des aktuellen Sonnenaufgang bzw. Sonnenuntergang (Astro Binding) möglich.
 
 ![PCB Top](/images/Top.png)   ![PCB Bottom](/images/Bottom.png)
+
+
+**Hardware**
+
+Neben dem WLAN-Modul und den beiden Relais (Schaltleistung 1500VA, 6A/250V), finden sich eine Spannungsversorgung, bestehend aus einem AC/DC-Wandler HI-Link HLK-PM01 (5V/600mA) für die Relais und einem Spannungsregler TS1117 (LowDrop 3V) für den Rest, eine 2-kanalige "Power Sense" Schaltung zur Detektion  von 230V Pegeln für den Controller, sowie Schnittstellen für UART, I²C und Analog- und Digital-IOs auf dem Board.
+Über drei Lötjumper (Brücken) lassen sich die beiden Relais entweder als Kreuzschaltung, zur Implementierung des Moduls in bestehende Licht-Installationen oder aber als Rolladenschalter konfigurieren. Hier schaltet das erste Relais die Versorgungsspanung des Motors während das zweite Relais die Richtung ändert.
+Die Stromversorgung des Moduls ist mit einer SMD-Sicherung mit 500mA gegen Überstrom, sowie mit einem Varistor gegen Überspannung abgesichert.
+
+
+**Software**
+
