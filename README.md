@@ -1,44 +1,44 @@
 # SmartSwitch
-## Unterputzmodul zur Steuerung von Rolläden bzw. der Realisierung einer Kreuzschaltung mittels ESP8266
+## Flush-mounted Module to control shutters / realize an intermediate switch with ESP8266
 
 **Vision**
 
-Im Zuge des Neubaus unseres Hauses entschieden wir uns für elektrische Rolläden. Diese wurden im ersten Schritt lediglich mit konventionellen Rolladen-Tastern, direkt neben dem jeweiligen Fenster, ausgestattet.
-Im zweiten Schritt möchten wir diese *smart* steuern können.
+During the construction of our new house, we’ve decided to install motorized roller shutters. To control them, we first used only standard shutter-push-buttons, right beside the correspondent window. As second step a *smart solution* should be established.
 
 ![SmartSwitch Modul](/images/SmartSwitch.jpg)
 
-Inspiriert durch Leo-Andres Hofmann's 230V I/O Modul für ESP8266 ([LUANI](https://luani.de/projekte/esp8266-hvio/)), machte ich mich an die Entwicklung eines eigenen I/O-Moduls zur Abfrage der Rolladentaster bzw. Steuerung des Rolladenmotors. Basis des Moduls ist der ESP-12F, ein integriertes WLAN-Modul, welches über zwei Wechslerrelais die eigentliche Steuerung des Motors übernimmt.
+Inspired by Leo-Andres Hofmann’s “230V I/O Modul für ESP8266” ([LUANI](https://luani.de/projekte/esp8266-hvio/)), I’ve decided to develop my own module to sense the shutter-push-buttons and control the motorization. Basis of the module is a ESP-12F, an integrated WLAN-Module which controls two changeover relays to move the shutters. 
 
-Bedient wird das Modul entweder vor Ort, über die bereits vorhandenen Wandtaster, oder mittels MQTT-Befehle über WLAN, zentral gesteuert über [OpenHab2](https://docs.openhab.org/index.html) auf meinem Raspberry Pi Zero W. Damit ist beispielsweise auch eine Steuerung der Rolläden in Abhängigkeit von Zeiten oder Events beispielsweise dem Zeitpunkt des aktuellen Sonnenaufgang bzw. Sonnenuntergang ([Astro Bindings](https://docs.openhab.org/addons/bindings/astro/readme.html)) möglich. Auch eine Automatische Abschattung in Abhängigkeit des Sonnenwinkels, der aktuellen Globalstrahlung der Sonne und der Außen- bzw. Raumtemperatur wäre denkbar. 
+The operation of the module can either be controlled by the already existing push-buttons, or via MQTT-Messages by WLAN, central controlled via [OpenHab2](https://docs.openhab.org/index.html), running on my Raspberry Pi Zero W. Therefore, a movement of the shutters regarding time or special events, for example time of dusk and down ([Astro Bindings](https://docs.openhab.org/addons/bindings/astro/readme.html)) can be realized. Also an automatized shadowing regarding sun position, global radiation and inside / outside temperature will be possible.
 
 ![PCB Top](/images/Top.png)   ![PCB Bottom](/images/Bottom.png)
 
 
 **Hardware**
 
-Neben dem WLAN-Modul und den beiden Relais (Schaltleistung 1500VA, 6A/250V), finden sich eine Spannungsversorgung, bestehend aus einem AC/DC-Wandler HI-Link HLK-PM01 (5V/600mA) für die Relais und einem Spannungsregler TS1117 (LowDrop 3V) für den Rest, eine 2-kanalige "Power Sense" Schaltung zur Detektion  von 230V Pegeln für den Controller, sowie Schnittstellen für UART, I²C und Analog- und Digital-IOs auf dem Board.
+Beside the WLAN-Module and the relays (contact rating 1500VA, 6A/250V), a power supply consisting of a AC/DC-Converter HI-Link HLK-PM01 (5V/600mA) to serve the relays and a voltage regulator TS1117 (LowDrop 3V) to serve the remaining circuit, a 2-chanel power sense circuit to detect 230V levels for the controller and interfaces like UART, I²C and analog/digital IO are included on the board.
 
-Über drei Lötjumper (Brücken) lassen sich die beiden Relais entweder als Kreuzschaltung, zur Implementierung des Moduls in bestehende Licht-Installationen oder aber als Rolladenschalter konfigurieren. Hier schaltet das erste Relais die Versorgungsspanung des Motors während das zweite Relais die Richtung ändert.
+Three soldering jumpers give the opportunity to decide if the relays should act as an intermediate switch to implement the module in an already existing light-installation or to act as a roller-shutter-controlling device. Therefore, the first relay powers the motor during the second relay controls moving direction.
 
-Die Stromversorgung des Moduls ist mit einer SMD-Sicherung mit 500mA gegen Überstrom, sowie mit einem Varistor gegen Überspannung abgesichert.
-
+The power supply of the module is secured by a SMD-Fuse (500mA) and a varistor (275V) against overload.
 
 **Software**
 
-Außer der Firmware ([NodeMCU](https://nodemcu.readthedocs.io/en/master/)) befinden sich vier LUA-Programme im Speicher des Moduls.
+In addition to the firmware ([NodeMCU](https://nodemcu.readthedocs.io/en/master/)) there are mainly four LUA-Scripts on the Module.
 
-Die Init-Datei versucht eine Verbindung zum im Modul hinterlegten Access Point (Router) herzustellen. Gelingt das nicht, spannt das Modul selbst einen eigenen Access Point auf und startet ein Enduser Setup so daß, beispielsweise bequem über ein Smart Phone, die Zugangsdaten des WLAN-Routers eingegeben werden können.
+The Init-File tries to connect to the access point whose SSID and password is stored at the ESP. If the connection couldn’t be established, the ESP himself opens an access point and starts an end user setup to give the user the possibility to enter SSID and password of an already existing access point (Router).
 
-Anschließend werden zwei Softwaremodule geladen. Das MQTT-Modul übernimmt die Konfiguration des MQTT-Client, verbindet sich mit dem in der MQTT.ini hinterlegten Broker und stellt diverse Prozeduren zur MQTT-Kommunikation bereit.
-Das INI-Handling-Modul stellt wie der Name schon sagt zwei Prozeduren zum einfachen Zugriff auf INI-Dateien über Key- und Value-Werte zur Verfügung.
+If the connection is established, two more software modules will be started. The MQTT-Module starts to configure the implemented MQTT-Client, opens a connection to the MQTT-Broker which is defined (IP, Port) in the MQTT.ini file and provides several procedures for MQTT communication. The INI-Handling-Module provides two more procedures for easy INI-File access by using “Key” and “Value” data.
 
-Final wir das eigentliche Hauptprogramm gestartet.
+Finally, the main program will be started.
 
+**Function**
 
-**Funktion**
+During normal operation, the main program offers the opportunity to control the module via the shutter-push-buttons by using both of the power sense inputs. If both buttons were pushed synchronously the module changes to teaching mode. Because of the fact that simple shutter motors neither feedback their position nor the state of their limit switches, the position of the shutter can only be traced by the time, the motor is in motion. Therefore, in teaching mode, the time to reach both final positions can be stored in module by closing and reopening the shutter completely.
+After that, a short push of a button results in moving to respective end position. If the button will be pressed longer then 1s the shutter moves as long as the button is pressed or final position is reached. By releasing the button, the current position of the shutter will be calculated regarding the time, the motor was in motion and will be stored in the module. Thus offers the opportunity to start motion from any position of the shutter or moving the shutter to a particular position (e.g. closing until only shutter slots are open).
 
-Das Hauptprogramm ermöglich unter anderem über die beiden Power-Sense Eingänge die Abfrage der Rolladentaster. Werden beide Taster gleichzeitig gedrückt, geht das Modul in den Teaching-Modus. Da die einfachen Rolladenmotore kein Feedback über die aktuelle Position geben können, kann nun durch Fahren des Rolladen in die beiden Endpositionen, die Zeit, die für die Verfahrwege benötigt wird, im Modul gespeichert werden.
-Durch kurzes Betätigen eines Tasters, fährt der Rolladen nun in die jeweilige Endposition. Wird der Taster hingegen länger als 1s betätigt, fährt der Rolladen bis zum Loslassen des Tasters bzw. Erreichen der Endposition weiter. Beim Loslassen wird über die betätigte Zeit die Position des Rolladens berechnet und im Modul hinterlegt. Dadurch ist auch das Anfahren einer bzw. Losfahren von einer bestimmten Position möglich.
+But not only manual operation by pushing a button is possible. As mentioned, the module acts also as a MQTT-Client. Via messages to the MQTT-Topic which is also settled in MQTT.ini file, motion to the final position is possible, either by command “UP” or “DOWN”. By sending a value from 0 to 100 the shutter moves to the correspondent position in percent. If the desired position is reached or the shutter reaches end position, the current position will be also send as MQTT-Message to the broker. Therefore, a visualization of the current position e.g. with  [HabPanel von OpenHab](https://docs.openhab.org/addons/uis/habpanel/readme.html) is possible.
 
-Da der Rolladen aber nicht nur manuell mittels Taster getriggert werden können soll, ist wie erwähnt ein MQTT-Client im Modul integriert. Über das MQTT-Topic, welches ebenfalls in der Datei MQTT.ini hinterlegt ist kann mit den Befehlen "UP" und "DOWN" die Endposition angefahren werden. Wird hingegen ein Wert zwischen 0 und 100 an das Modul gesendet, fährt der Rolladen die entsprechende Position in Prozent an. Bei Erreichen der Position bzw. des Endwertes, wird die aktuelle Position, ebenfalls als MQTT-Message an den Broker zurückgegeben. So ist die Anzeige der aktuelle Position des Rolladens z.B. im [HabPanel von OpenHab](https://docs.openhab.org/addons/uis/habpanel/readme.html) möglich.
+**Safety**
+
+By operating the module at mains voltage, the active parts and pins should be covered against directly and indirectly touching. Therefore, I’ve designed a Bottom-Coverage for the module with FreeCAD and printed it with my Anet A6 3D-Printer. As positive side effect of the coverage, all SMT-Components on bottom side are protected against mechanical damages.
