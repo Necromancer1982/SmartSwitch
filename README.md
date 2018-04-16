@@ -7,7 +7,7 @@ During the construction of our new house, we’ve decided to install motorized r
 
 ![SmartSwitch Modul](/images/SmartSwitch.jpg)
 
-Inspired by Leo-Andres Hofmann’s “230V I/O Modul für ESP8266” ([LUANI](https://luani.de/projekte/esp8266-hvio/)), I’ve decided to develop my own module to sense the shutter-push-buttons and control the motorization. Basis of the module is a ESP-12F, an integrated WLAN-Module which controls two changeover relays to move the shutters. 
+I’ve decided to develop my own module to sense the shutter-push-buttons and control the motorization. Basis of the module is a ESP-12F, an integrated WLAN-Module which controls two changeover relays to move the shutters. 
 
 The operation of the module can either be controlled by the already existing push-buttons, or via MQTT-Messages by WLAN, central controlled via [OpenHab2](https://docs.openhab.org/index.html), running on my Raspberry Pi Zero W. Therefore, a movement of the shutters regarding time or special events, for example time of dusk and down ([Astro Bindings](https://docs.openhab.org/addons/bindings/astro/readme.html)) can be realized. Also an automatized shadowing regarding sun position, global radiation and inside / outside temperature will be possible.
 
