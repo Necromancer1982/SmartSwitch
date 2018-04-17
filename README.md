@@ -42,3 +42,10 @@ But not only manual operation by pushing a button is possible. As mentioned, the
 **Safety**
 
 By operating the module at mains voltage, the active parts and pins should be covered against directly and indirectly touching. Therefore, I’ve designed a Bottom-Coverage for the module with FreeCAD and printed it with my Anet A6 3D-Printer. As positive side effect of the coverage, all SMT-Components on bottom side are protected against mechanical damages.
+
+
+### Safety Disclaimer
+
+Building and usage at your own risk. SmartSwitch uses potentially lethal mains voltages.
+
+If you are a beginner in electronics or don't have the proper experience to work with mains voltage, consult a professional! I am not liable for any mishaps that may occur due to misuse of SmartSwitch or electrical system (including mains power) including but not limited to: errors or omissions, loss of life, or property damage. Take all safety precautions as necessary. You are fully responsible for your actions, perform them at your own risk!
