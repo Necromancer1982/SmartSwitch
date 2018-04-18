@@ -5,7 +5,7 @@
 
 During the construction of our new house, we’ve decided to install motorized roller shutters. To control them, we first used only standard shutter-push-buttons, right beside the correspondent window. As second step a *smart solution* should be established.
 
-![SmartSwitch Modul](/images/SmartSwitch.jpg)
+![SmartSwitch Modul](/images/SmartSwitch_with_Cover.jpg)
 
 I’ve decided to develop my own module to sense the shutter-push-buttons and control the motorization. Basis of the module is a ESP-12F, an integrated WLAN-Module which controls two changeover relays to move the shutters. 
 
@@ -16,7 +16,9 @@ The operation of the module can either be controlled by the already existing pus
 
 **Hardware**
 
-Beside the WLAN-Module and the relays (contact rating 1500VA, 6A/250V), a power supply consisting of a AC/DC-Converter HI-Link HLK-PM01 (5V/600mA) to serve the relays and a voltage regulator TS1117 (LowDrop 3V) to serve the remaining circuit, a 2-chanel power sense circuit to detect 230V levels for the controller and interfaces like UART, I²C and analog/digital IO are included on the board.
+Beside the WLAN-Module and the relays (contact rating 1500VA, 6A/250V), a power supply consisting of a AC/DC-Converter HI-Link HLK-PM01 (5V/600mA) to serve the relays and a voltage regulator TS1117 (LowDrop 3V) to serve the remaining circuit, a 2-chanel power sense circuit to detect 230V levels for the controller and interfaces like UART, I²C and analog/digital IO are included on the board. A push button for hardware reset is also implemented on bottom side of the PCB
+
+![SmartSwitch Modul](/images/SmartSwitch_Top.jpg)     ![SmartSwitch Modul](/images/SmartSwitch_Bottom.jpg)     ![SmartSwitch Modul](/images/SmartSwitch_Reset.jpg)
 
 Three soldering jumpers give the opportunity to decide if the relays should act as an intermediate switch to implement the module in an already existing light-installation or to act as a roller-shutter-controlling device. Therefore, the first relay powers the motor during the second relay controls moving direction.
 
@@ -42,6 +44,8 @@ But not only manual operation by pushing a button is possible. As mentioned, the
 **Safety**
 
 By operating the module at mains voltage, the active parts and pins should be covered against directly and indirectly touching. Therefore, I’ve designed a Bottom-Coverage for the module with FreeCAD and printed it with my Anet A6 3D-Printer. As positive side effect of the coverage, all SMT-Components on bottom side are protected against mechanical damages.
+
+![SmartSwitch Modul](/images/Cover_of_SmartSwitch.jpg)
 
 
 ### Safety Disclaimer
