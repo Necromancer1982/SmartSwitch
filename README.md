@@ -16,11 +16,11 @@ The operation of the module can either be controlled by the already existing pus
 
 **Hardware**
 
-Beside the WLAN-Module and the relays (contact rating 1500VA, 6A/250V), a power supply consisting of a AC/DC-Converter HI-Link HLK-PM01 (5V/600mA) to serve the relays and a voltage regulator TS1117 (LowDrop 3V) to serve the remaining circuit, a 2-chanel power sense circuit to detect 230V levels for the controller and interfaces like UART, I²C and analog/digital IO are included on the board. A push button for hardware reset is also implemented on bottom side of the PCB
+Beside the WLAN-Module and the relays (contact rating 1500VA, 6A/250V), a power supply consisting of a AC/DC-Converter HI-Link HLK-PM01 (5V/600mA) to serve the relays and a voltage regulator TS1117 (LowDrop 3V) to serve the remaining circuit, a 2-chanel power sense circuit to detect 230V levels for the controller and interfaces like UART, I²C and analog/digital IO are included on the board. A push button for hardware reset is also implemented on bottom side of the PCB.
 
 ![SmartSwitch Modul](/images/SmartSwitch_Top.jpg)     ![SmartSwitch Modul](/images/SmartSwitch_Bottom.jpg)     ![SmartSwitch Modul](/images/SmartSwitch_Reset.jpg)
 
-Three soldering jumpers give the opportunity to decide if the relays should act as an intermediate switch to implement the module in an already existing light-installation or to act as a roller-shutter-controlling device. Therefore, the first relay powers the motor during the second relay controls moving direction.
+Three soldering jumpers give the opportunity to decide if the relays should act as an intermediate switch to implement the module in an already existing light-installation or to act as a roller-shutter-controlling device. Therefore, the first relay powers the motor during the second relay controls moving direction. Via a fourth soldering Jumper it is possible to supply mains voltage to the relays, so for roller shutter function, there is no need to connect phase two times, for supplying the module and supplying the motor. 
 
 The power supply of the module is secured by a SMD-Fuse (500mA) and a varistor (275V) against overload.
 
