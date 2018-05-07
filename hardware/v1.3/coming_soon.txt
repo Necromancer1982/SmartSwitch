@@ -1,4 +1,0 @@
-New Version in progress
-
-New feature:
-SMT-Fuse for consumer current (Rollershutter / Lightbulbs)
