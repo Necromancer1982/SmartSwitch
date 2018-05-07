@@ -19238,8 +19238,8 @@ DIN A4, landscape with location and doc. field</description>
 <part name="R3" library="rcl" deviceset="R-EU_" device="R1206" value="100k"/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="R1206" value="100k"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="R1206" value="47k"/>
-<part name="R6" library="rcl" deviceset="R-EU_" device="R1206" value="47k"/>
+<part name="R5" library="rcl" deviceset="R-EU_" device="R1206" value="220k"/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="R1206" value="220k"/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="C1" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="C2" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
