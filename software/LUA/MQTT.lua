@@ -34,9 +34,9 @@ print("*************************************************************************
 -- Set Variables ---------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------
 MQTT_Broker_Secure = 0														-- Set Security-Level
-MQTT_Publish_Topic_QoS = 0													-- Set Publish QoS-Level
-MQTT_Publish_Topic_Retain = 0												-- Set Retain-Level
-MQTT_Subscribe_Topic_QoS = 0												-- Set Subscribe QoS-Level
+MQTT_Publish_Topic_QoS = 1													-- Set Publish QoS-Level
+MQTT_Publish_Topic_Retain = 1												-- Set Retain-Level
+MQTT_Subscribe_Topic_QoS = 1												-- Set Subscribe QoS-Level
 MQTT_Client_ID = string.gsub(wifi.sta.getmac(), ":", "")					-- Get MAC-Address as Client-ID
 MQTT_Client_KeepAlive_Time = 120											-- Set Keep Alive Time
 MQTT_Connection = 0															-- Set Connection-Status
