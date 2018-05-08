@@ -87,8 +87,12 @@ function message_get(topic, data)
 	if data == "MANUAL_STOP" then
 		manual_flag = 0
 	end
+-- Handling if "STATUS" was received ---------------------------------------------------------------------------------------------    
+	if data == "STATUS" then
+		sendData(position)													-- Feedback and store position
+	end
 -- Handling if percentage was received ------------------------------------------------------------------------------------------------
-    if data ~= "MANUAL_START" and data ~= "MANUAL_STOP" and data ~= "TEACH" and data ~= "UP" and data ~= "DOWN" and data ~= "STOP" then
+    if data ~= "MANUAL_START" and data ~= "MANUAL_STOP" and data ~= "TEACH" and data ~= "UP" and data ~= "DOWN" and data ~= "STOP" and data ~= "STATUS" then
 		delta = 0
 		soll = tonumber(data)
         if soll > position then											-- Received percentage > then position => move downward
