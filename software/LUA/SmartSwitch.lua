@@ -131,7 +131,7 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------
 function sendData(data)
     if wifi.sta.getip()~= nil then                                      -- Check for IP again
-        if MQTT_CONNECTION == 1 then                                    -- If MQTT-Connection avaliable
+        if MQTT_Connection == 1 then                                    -- If MQTT-Connection avaliable
             fire("/SmartSwitch/"..sensor_id.."/status", data)           -- Fire MQTT-Message
             print("MQTT: "..data)
         else
