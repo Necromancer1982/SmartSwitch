@@ -52,20 +52,16 @@ tmr.alarm(0, 2000, 1, function()                                        -- check
 			tmr.stop(0)					                            	-- stop timer to get IP
 			-- ws2812.write(string.char(10, 0, 0))							-- Set status "red"
 			tmr.delay(5000000)
-			dofile("INI_Handling.lc")                                  -- Call INI-Library
-			dofile("MQTT.lc")                                          -- Call MQTT-Library
-			tmr.alarm(1, 3000, tmr.ALARM_SINGLE, function()             -- Wait 3 seconds (takes time to connect to broker)
-				dofile("SmartSwitch.lc")                               -- start main programm 
-			end)
+			dofile("INI_Handling.lc")                                  	-- Call INI-Library
+			dofile("SmartSwitch.lc")                               		-- start main programm
+			dofile("MQTT.lc")                                          	-- Call MQTT-Library 
 		end
 	else                                                                -- got IP, start Main Program
         print("Module IP = "..wifi.sta.getip() .. "  Start main Program")
 	    tmr.stop(0)                                                     -- stop timer for IP address scann
         -- ws2812.write(string.char(0, 10, 0))                             -- Set staus "green"
-        dofile("INI_Handling.lc")                                      -- Call INI-Library
-        dofile("MQTT.lc")                                              -- Call MQTT-Library
-        tmr.alarm(1, 3000, tmr.ALARM_SINGLE, function()                 -- Wait 3 seconds (takes time to connect to broker)
-           dofile("SmartSwitch.lc")                                    -- start main programm 
-        end)
+		dofile("INI_Handling.lc")                                      	-- Call INI-Library
+		dofile("SmartSwitch.lc")                                    	-- start main programm 
+        dofile("MQTT.lc")                                              	-- Call MQTT-Library
     end
 end)
