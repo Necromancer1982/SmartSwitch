@@ -22,9 +22,12 @@
 --------------------------------------------------------------------------------------------------------------------------------------
 -- Get Values from MQTT.ini ----------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------
+sensor_id = string.gsub(wifi.sta.getmac(), ":", "")
+
 MQTT_Broker = read_ini("MQTT.ini", "IP")									-- Get Broker-IP from INI-File
 MQTT_Broker_Port = read_ini("MQTT.ini", "Port")								-- Get Broker-Port from INI-File
-MQTT_Topic = read_ini("MQTT.ini", "Topic")									-- Get Subscribe Topic from INI-File
+MQTT_Topic = "/SmartSwitch/"..sensor_id.."/command"                         -- Topic = /SmartSwitch/<MACADRESS>/command
+-- MQTT_Topic = read_ini("MQTT.ini", "Topic")								-- Get Subscribe Topic from INI-File
 
 print("****************************************************************************")
 print("BROKER: "..MQTT_Broker..", PORT: "..MQTT_Broker_Port..", TOPIC: "..MQTT_Topic)
