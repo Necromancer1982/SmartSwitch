@@ -42,7 +42,7 @@ function message_get(topic, data)
         tmr.alarm(4, 100, tmr.ALARM_AUTO, function()                	-- Calculate new position every 100ms
             position = position - (100 / up_time)
         end)
-        tmr.alarm(5, 100 * (up_time / 100) * position, tmr.ALARM_SINGLE, function() -- move downward calculated time to reach position = 0%
+        tmr.alarm(5, (100 * (up_time / 100) * position) + 3000, tmr.ALARM_SINGLE, function() -- move downward calculated time to reach position = 0% (3s longer to open completly for shure)
             tmr.unregister(4)                                       	-- Stop calculation of position
             position = 0                                            	-- Set position to 0%
             motionStop()                                            	-- Stop movement
@@ -60,7 +60,7 @@ function message_get(topic, data)
         tmr.alarm(4, 100, tmr.ALARM_AUTO, function()                	-- Calculate new position every 100ms
             position = position + (100 / down_time)
         end)
-        tmr.alarm(5, 100 * (down_time / 100) * (100 - position), tmr.ALARM_SINGLE, function()   -- move downward calculated time to reach position = 100 %
+        tmr.alarm(5, (100 * (down_time / 100) * (100 - position)) + 3000, tmr.ALARM_SINGLE, function()   -- move downward calculated time to reach position = 100 % (3s longer to close completly for shure)
             tmr.unregister(4)                                       	-- Stop calculation of position
             position = 100                                          	-- Set position to 100%
             motionStop()                                            	-- Stop movement
@@ -250,7 +250,7 @@ function isr (level, when)
 				tmr.alarm(4, 100, tmr.ALARM_AUTO, function()			-- Calculate new position every 100ms
 					position = position + (100 / down_time)
 				end)
-				tmr.alarm(5, 100 * (down_time / 100) * (100 - position), tmr.ALARM_SINGLE, function()	-- move downward calculated time to reach position = 100 %
+				tmr.alarm(5, (100 * (down_time / 100) * (100 - position)) + 3000, tmr.ALARM_SINGLE, function()	-- move downward calculated time to reach position = 100 % (3s longer to close completly for shure)
 					tmr.unregister(4)									-- Stop calculation of position
 					position = 100										-- Set position to 100%
 					motionStop()										-- Stop movement
@@ -310,7 +310,7 @@ function isr (level, when)
 				tmr.alarm(4, 100, tmr.ALARM_AUTO, function()			-- Calculate new position every 100ms
 					position = position - (100 / up_time)
 				end)
-				tmr.alarm(5, 100 * (up_time / 100) * position, tmr.ALARM_SINGLE, function()	-- move downward calculated time to reach position = 0%
+				tmr.alarm(5, (100 * (up_time / 100) * position) + 3000, tmr.ALARM_SINGLE, function()	-- move downward calculated time to reach position = 0% (3s longer to close completly for shure)
 					tmr.unregister(4)									-- Stop calculation of position
 					position = 0										-- Set position to 0%
 					motionStop()										-- Stop movement
