@@ -19270,8 +19270,8 @@ DIN A4, landscape with location and doc. field</description>
 <part name="D1" library="diode" deviceset="DIODE-" device="SOD323-W" value="1N4148"/>
 <part name="P+4" library="supply1" deviceset="+5V" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
-<part name="U$7" library="transistor-fet" deviceset="IRLML2502" device=""/>
-<part name="U$8" library="transistor-fet" deviceset="IRLML2502" device=""/>
+<part name="U$7" library="transistor-fet" deviceset="IRLML2502" device="" value="IRLML2402"/>
+<part name="U$8" library="transistor-fet" deviceset="IRLML2502" device="" value="IRLML2402"/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device="" value=" "/>
