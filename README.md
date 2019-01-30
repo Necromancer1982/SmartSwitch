@@ -6,6 +6,8 @@
 - SmartSwitch V1.2  04/2018   1st official public Version
 - SmartSwitch V1.3  05/2018   ADD: Additional Fuse (F2, 4A) for consumer current
 
+- Software now avaliable for ArduinoIDE (including OTA)
+
 **Vision**
 
 During the construction of our new house, we’ve decided to install motorized roller shutters. To control them, we first used only standard shutter-push-buttons, right beside the correspondent window. As second step a *smart solution* should be established.
