@@ -5,7 +5,6 @@
 
 - SmartSwitch V1.2  04/2018   1st official public Version
 - SmartSwitch V1.3  05/2018   ADD: Additional Fuse (F2, 4A) for consumer current
-
 - Software now avaliable for ArduinoIDE (including OTA)
 
 **Vision**
