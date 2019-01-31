@@ -43,12 +43,23 @@ If the connection is established, two more software modules will be started. The
 
 Finally, the main program will be started.
 
+:+1: _UPDATE_
+
+Now I'd also written a new software for ArduinoIDE.
+The main advantage of this new sketch is the possibility of updating the software via OTA (Over the Air update via WiFi).
+After flashing the sketch via serial adapter for the first time, the module can be found and flashed via ArduinoIDE OTA-Functionality.
+
+Additionally there are a view smaller upgrades and BugFixes implemented in the new software.
+
+The functionality of the Arduino-Software is mostly the same as the LUA-Skript.
+The module tries to connect to the last stored access point. If no connection could be established the module starts its implemented enduser setup. SSID and password of the AP and also the site of usage and MQTT-borker IP can be configured. After this initialisation the module starts its normal operation and can be either controlled via the already existing push buttons or MQTT-Commands.
+
 **Function**
 
-During normal operation, the main program offers the opportunity to control the module via the shutter-push-buttons by using both of the power sense inputs. If both buttons were pushed synchronously the module changes to teaching mode. Because of the fact that simple shutter motors neither feedback their position nor the state of their limit switches, the position of the shutter can only be traced by the time, the motor is in motion. Therefore, in teaching mode, the time to reach both final positions can be stored in module by closing and reopening the shutter completely.
+During normal operation, the main program offers the opportunity to control the module via the shutter-push-buttons by using both of the power sense inputs. (Only LUA-Skript: If both buttons were pushed synchronously the module changes to teaching mode.) Via MQTT-Command "TEACH", the module changes to teaching mode. Because of the fact that simple shutter motors neither feedback their position nor the state of their limit switches, the position of the shutter can only be traced by the time, the motor is in motion. Therefore, in teaching mode, the time to reach both final positions can be stored in module by closing and reopening the shutter completely.
 After that, a short push of a button results in moving to respective end position. If the button will be pressed longer then 1s the shutter moves as long as the button is pressed or final position is reached. By releasing the button, the current position of the shutter will be calculated regarding the time, the motor was in motion and will be stored in the module. Thus offers the opportunity to start motion from any position of the shutter or moving the shutter to a particular position (e.g. closing until only shutter slots are open).
 
-But not only manual operation by pushing a button is possible. As mentioned, the module acts also as a MQTT-Client. Via messages to the MQTT-Topic which is also settled in MQTT.ini file, motion to the final position is possible, either by command “UP” or “DOWN”. By sending a value from 0 to 100 the shutter moves to the correspondent position in percent. If the desired position is reached or the shutter reaches end position, the current position will be also send as MQTT-Message to the broker. Therefore, a visualization of the current position e.g. with  [HabPanel von OpenHab](https://docs.openhab.org/addons/uis/habpanel/readme.html) is possible.
+But not only manual operation by pushing a button is possible. As mentioned, the module acts also as a MQTT-Client. Via messages to the MQTT-Topic (LUA-Skript: which is also settled in MQTT.ini file; ARDUINO-Skript: /SmartSwitch/SmartSwitch_\<SITE or MAC\>/), motion to the final position is possible, either by command “UP” or “DOWN”. By sending a value from 0 to 100 the shutter moves to the correspondent position in percent. If the desired position is reached or the shutter reaches end position, the current position will be also send as MQTT-Message to the broker (ARDUINO: Also the RSSI of the module will be sent). Therefore, a visualization of the current position e.g. with  [HabPanel von OpenHab](https://docs.openhab.org/addons/uis/habpanel/readme.html) is possible.
 
 **Safety**
 
