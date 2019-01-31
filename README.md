@@ -49,7 +49,7 @@ Now I'd also written a new software for ArduinoIDE.
 The main advantage of this new sketch is the possibility of updating the software via OTA (Over the Air update via WiFi).
 After flashing the sketch via serial adapter for the first time, the module can be found and flashed via ArduinoIDE OTA-Functionality.
 
-Additionally there are a view smaller upgrades and BugFixes implemented in the new software.
+Additionally there are a few smaller upgrades and BugFixes implemented in the new software.
 
 The functionality of the Arduino-Software is mostly the same as the LUA-Skript.
 The module tries to connect to the last stored access point. If no connection could be established the module starts its implemented enduser setup. SSID and password of the AP and also the site of usage and MQTT-borker IP can be configured. After this initialisation the module starts its normal operation and can be either controlled via the already existing push buttons or MQTT-Commands.
