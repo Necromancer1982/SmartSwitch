@@ -28,9 +28,9 @@
 // ###                                                                                                                                                                        ###
 // ### + Built-in MQTT-Client                                                                                                                                                 ###
 // ###   - MQTT-Topics:                                                                                                                                                       ###
-// ###     * /SmartSwitch/<name/IP>/status/position/      => Publish:   Actual position (in percent) of shutter                                                               ###
-// ###     * /SmartSwitch/<name/IP>/status/rssi/          => Publish:   RSSI of connected Accesspoint in dBm                                                                  ###
-// ###     * /SmartSwitch/<name/IP>/command/              => Subscribe: Subscribe-Topic of the Module                                                                         ###
+// ###     * /SmartSwitch/<name/MAC>/status/position/      => Publish:   Actual position (in percent) of shutter                                                               ###
+// ###     * /SmartSwitch/<name/MAC>/status/rssi/          => Publish:   RSSI of connected Accesspoint in dBm                                                                  ###
+// ###     * /SmartSwitch/<name/MAC>/command/              => Subscribe: Subscribe-Topic of the Module                                                                         ###
 // ###   - Instructionset:                                                                                                                                                    ###
 // ###     * /UP:             => Opens the shutter completely                                                                                                                 ###
 // ###     * /DOWN:           => Closes the shutter completely                                                                                                                ###
@@ -65,9 +65,9 @@ extern "C" {
 String MQTT_name;                                                                     // Variable (String) to store name of MQTT-Client
 char MQTT_name_char[128];                                                             // Name (Char) to connect MQTT-Client with broker
 String hostname;                                                                      // Variable for Name of Module (part of MQTT-Topic, either IP of module or stored site) 
-String topic = "/SmartSwitch/";                                                       // MQTT-Topic for publishing                              *** MQTT-Topic for publishing ***
-int WiFiManagerTimeout = 180;                                                         // Define Timeout for Wifi-Manager and set it to 180s     *** Timeout for WiFi-Manager  ***
-char MQTT_BROKER[40] = "192.168.2.115";                                               // IP of MQTT-Broker                                      *** IP of MQTT-Broker         ***
+String topic = "/SmartSwitch/";                                                       // First part of MQTT-Topic for publishing                *** Part of MQTT-Topic for publishing ***
+int WiFiManagerTimeout = 180;                                                         // Define Timeout for Wifi-Manager and set it to 180s     *** Timeout for WiFi-Manager          ***
+char MQTT_BROKER[40] = "192.168.2.115";                                               // Preset IP of MQTT-Broker                               *** Preset-IP of MQTT-Broker          ***
 bool wifiFirstConnected = false;                                                      // Flag for first WiFi connection
 int cf = 0;                                                                           // WiFi Connection flag
 String ausgabe;                                                                       // Variable for MQTT-Message
@@ -99,14 +99,14 @@ bool up_pressed = false;                                                        
 bool down_pressed = false;                                                            // Flag if DOWN was pressed
 unsigned long LastTime = 0;                                                           // Variable to store last time of meassurement
 unsigned long CurrentTime = 0;                                                        // Variable to store actual time
-unsigned long interval = 1000;                                                        // Variable to store interval of measurement              *** Interval of measurement   ***
+unsigned long interval = 1000;                                                        // Variable to store interval of MQTT-Connection-Check    *** Interval of MQTT-Check   ***
 // *** Needed IOs ***************************************************************************************************************************************************************
-#define IO_I1 12                                                                      // Map IO_I1 (UP) to GPIO12
-#define IO_I2 13                                                                      // Map IO_I2 (DOWN) to GPIO13
-#define IO_O1 4                                                                       // Map IO_O1 (DIRECTION) to GPIO4
-#define IO_O2 5                                                                       // Map IO_O2 (POWER) to GPIO5
+#define IO_I1 12                                                                      // Map IO_I1 (Input: UP) to GPIO12
+#define IO_I2 13                                                                      // Map IO_I2 (Input: DOWN) to GPIO13
+#define IO_O1 4                                                                       // Map IO_O1 (Relais: DIRECTION) to GPIO4
+#define IO_O2 5                                                                       // Map IO_O2 (Relais: POWER) to GPIO5
 // *** Needed Services **********************************************************************************************************************************************************
-WiFiClient espClient;                                                                 // Create a client
+WiFiClient espClient;                                                                 // Create a WiFi-Client
 PubSubClient client(espClient);                                                       // Create a PubSubClient-Object (MQTT)
 
 // ##############################################################################################################################################################################
@@ -193,6 +193,9 @@ void setup() {
   EEPROM.end();                                                                       // Free memory
   if (site == "" || (String(site).length() > 100)) {                                  // If EEPROM (site) empty or flushed with nonsence
     hostname = "SmartSwitch_" + String(WiFi.macAddress());                            // Networkname of Module (Identifier: MAC)
+    String empty = "";                                                                // Initialize empty string
+    empty.toCharArray(site, 128);                                                     // Store empty string to char "site"
+    empty.toCharArray(broker, 40);                                                    // Store empty string to char "broker"
   } else {
     hostname = "SmartSwitch_" + String(site);                                         // Networkname of Module (Identifier: site)
   }
@@ -718,9 +721,9 @@ void loop() {
       newMQTTmessage = false;                                                         // Reset "New-MQTT-Message-Flag"
       MQTT_Handling();                                                                // Call MQTT-Handling
     }
-    ButtonHandling();                                                                 // Call Button-Handling Routine
-    MoveNow();                                                                        // Call Move-According-Time Routine
   }
+  ButtonHandling();                                                                   // Call Button-Handling Routine
+  MoveNow();                                                                          // Call Move-According-Time Routine
   CurrentTime = millis();                                                             // Get current time
   if ((CurrentTime - LastTime) >= interval) {                                         // Wait interval-time until checking MQTT-Connection
     LastTime = CurrentTime;
