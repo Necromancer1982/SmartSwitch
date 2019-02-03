@@ -199,6 +199,34 @@ void setup() {
   } else {
     hostname = "SmartSwitch_" + String(site);                                         // Networkname of Module (Identifier: site)
   }
+  if (isnan(down_time)) {                                                             // Check if EEPROM-Content "down_time" is not a number
+    Serial.println("NAN: down_time!");                                                // Debug printing
+    down_time = 0;                                                                    // Set down_time to 0
+    EEPROM.begin(4095);                                                               // Define EEPROM
+    EEPROM.put(10, down_time);                                                        // Write "down_time" to EEPROM
+    delay(200);                                                                       // Delay
+    EEPROM.commit();                                                                  // Only needed for ESP8266 to get data written
+    EEPROM.end();                                                                     // Free RAM copy of structure
+  }
+  if (isnan(up_time)) {                                                               // Check if EEPROM-Content "up_time" is not a number
+    Serial.println("NAN: up_time!");                                                  // Debug printing
+    up_time = 0;                                                                      // Set up_time to 0
+    EEPROM.begin(4095);                                                               // Define EEPROM
+    EEPROM.put(20, up_time);                                                          // Write "up_time" to EEPROM
+    delay(200);                                                                       // Delay
+    EEPROM.commit();                                                                  // Only needed for ESP8266 to get data written
+    EEPROM.end();                                                                     // Free RAM copy of structure
+  }
+  if (isnan(pos)) {                                                                   // Check if EEPROM-Content "pos" is not a number
+    Serial.println("NAN: pos!");                                                      // Debug printing
+    pos = 0.0;                                                                        // Set pos to 0.0
+    EEPROM.begin(4095);                                                               // Define EEPROM
+    EEPROM.put(30, pos);                                                              // Write "pos" to EEPROM
+    delay(200);                                                                       // Delay
+    EEPROM.commit();                                                                  // Only needed for ESP8266 to get data written
+    EEPROM.end();                                                                     // Free RAM copy of structure
+  }
+  
 // *** Initialize WiFi-Event-Handler ********************************************************************************************************************************************
   static WiFiEventHandler e1;                                                         // Define WiFi-Handler
   e1 = WiFi.onStationModeGotIP (onSTAGotIP);                                          // As soon WiFi is connected, start NTP Client
@@ -512,6 +540,9 @@ void ButtonHandling() {
     }
 // *** Teaching-Mode ************************************************************************************************************************************************************
     if (teach_flag) {                                                                 // If Teaching-Flag is set
+      ausgabe = "Teach me...";                                                        // Build strings to send to MQTT-Broker and send it
+      top = topic + hostname_char + "/status/teach/";                                 // Built topic to sent message to
+      client.publish(top.c_str(), ausgabe.c_str());                                   // Publish MQTT-Message
       down_time = 0;                                                                  // Reset Down-Time
       up_time = 0;                                                                    // Reset Up-Time
       // *** STEP 1: Wait until button is pressed ***
@@ -562,6 +593,12 @@ void ButtonHandling() {
         motionStop();                                                                 // Stop motion
       }
       teach_flag = false;                                                             // Reset Teaching-Flag
+      ausgabe = String(down_time);                                                    // Build strings to send to MQTT-Broker and send it
+      top = topic + hostname_char + "/status/teach/";                                 // Built topic to sent message to
+      client.publish(top.c_str(), ausgabe.c_str());                                   // Publish MQTT-Message
+      ausgabe = String(up_time);                                                      // Build strings to send to MQTT-Broker and send it
+      top = topic + hostname_char + "/status/teach/";                                 // Built topic to sent message to
+      client.publish(top.c_str(), ausgabe.c_str());                                   // Publish MQTT-Message
       EEPROM.begin(4095);                                                             // Define EEPROM
       EEPROM.put(10, down_time);                                                      // Write down_time to EEPROM
       EEPROM.put(20, up_time);                                                        // Write up_time to EEPROM
