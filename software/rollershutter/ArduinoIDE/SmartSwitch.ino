@@ -28,15 +28,16 @@
 // ###                                                                                                                                                                        ###
 // ### + Built-in MQTT-Client                                                                                                                                                 ###
 // ###   - MQTT-Topics:                                                                                                                                                       ###
-// ###     * /SmartSwitch/<name/MAC>/status/position/      => Publish:   Actual position (in percent) of shutter                                                               ###
-// ###     * /SmartSwitch/<name/MAC>/status/rssi/          => Publish:   RSSI of connected Accesspoint in dBm                                                                  ###
-// ###     * /SmartSwitch/<name/MAC>/command/              => Subscribe: Subscribe-Topic of the Module                                                                         ###
+// ###     * /SmartSwitch/<name/MAC>/status/position/      => Publish:   Actual position (in percent) of shutter                                                              ###
+// ###     * /SmartSwitch/<name/MAC>/status/rssi/          => Publish:   RSSI of connected Accesspoint in dBm                                                                 ###
+// ###     * /SmartSwitch/<name/MAC>/command/              => Subscribe: Subscribe-Topic of the Module                                                                        ###
 // ###   - Instructionset:                                                                                                                                                    ###
 // ###     * /UP:             => Opens the shutter completely                                                                                                                 ###
 // ###     * /DOWN:           => Closes the shutter completely                                                                                                                ###
 // ###     * /STOP:           => Stops the shutter at current position and publish act. position of shutter and RSSI of AP via MQTT                                           ###
 // ###     * /TEACH:          => Starts Teaching-Mode to teach time to completely open/close shutter                                                                          ###
-// ###     * /STATUS:         => Publishes act. position of shutter and RSSI of connected AP via MQTT                                                                         ###
+// ###     * /STATUS:         => Publishes act. position of shutter, RSSI of connected AP and Software-Revision via MQTT                                                      ###
+// ##      * /SETUP:          => Deletes stored SSID and PW of already connected AP, do SW-Reset and boots into Enduser Setup                                                 ###
 // ###     * /MANUAL_START:   => Starts Manual-Mode (Shutter can be moved without any restictions                                                                             ###
 // ###     * /MANUAL_STOP:    => Stops Manual-Mode                                                                                                                            ###
 // ###     * /<%-Value>:      => Moves Shutter to percentage position                                                                                                         ###
@@ -100,6 +101,7 @@ bool down_pressed = false;                                                      
 unsigned long LastTime = 0;                                                           // Variable to store last time of meassurement
 unsigned long CurrentTime = 0;                                                        // Variable to store actual time
 unsigned long interval = 1000;                                                        // Variable to store interval of MQTT-Connection-Check    *** Interval of MQTT-Check   ***
+String ProgRevision = "SmartSwitch V1.2";                                             // Variable to store Software-Revision                    *** Software-Revision        ***
 // *** Needed IOs ***************************************************************************************************************************************************************
 #define IO_I1 12                                                                      // Map IO_I1 (Input: UP) to GPIO12
 #define IO_I2 13                                                                      // Map IO_I2 (Input: DOWN) to GPIO13
@@ -344,6 +346,9 @@ boolean isNumeric(String str) {
 // ### Move shutter up ##########################################################################################################################################################
 // ##############################################################################################################################################################################
 void moveUp() {
+  ausgabe = "UP";                                                                     // Build strings to send to MQTT-Broker and send it
+  top = topic + hostname_char + "/status/moving/";                                    // Built topic to sent message to
+  client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
   MovedTime = millis();                                                               // Get Start-Time of movement
   digitalWrite(IO_O2, LOW);                                                           // Reset IO_O2 Relais (set direction UP)
   delay(200);                                                                         // Delay 200ms
@@ -354,6 +359,9 @@ void moveUp() {
 // ### Move shutter down ########################################################################################################################################################
 // ##############################################################################################################################################################################
 void moveDown() {
+  ausgabe = "DOWN";                                                                   // Build strings to send to MQTT-Broker and send it
+  top = topic + hostname_char + "/status/moving/";                                    // Built topic to sent message to
+  client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
   MovedTime = millis();                                                               // Get Start-Time of movement
   digitalWrite(IO_O2, HIGH);                                                          // Set IO_O2 Relais (set direction DOWN)
   delay(200);                                                                         // Delay 200ms
@@ -378,9 +386,15 @@ void motionStop() {
   ausgabe = String(pos);                                                              // Build strings to send to MQTT-Broker and send it
   top = topic + hostname_char + "/status/position/";                                  // Built topic to sent message to
   client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
+  ausgabe = String(pos);                                                              // Build strings to send to MQTT-Broker and send it
+  top = topic + hostname_char + "/command/";                                          // Built topic to sent message to
+  client.publish(top.c_str(), ausgabe.c_str(), true);                                 // Publish MQTT-Message
   long rssi = WiFi.RSSI();                                                            // Get RSSI of WiFi-Connection
   ausgabe = String(rssi);                                                             // Build strings to send to MQTT-Broker and send it
   top = topic + hostname_char + "/status/rssi/";                                      // Built topic to sent message to
+  client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
+  ausgabe = "STOP";                                                                   // Build strings to send to MQTT-Broker and send it
+  top = topic + hostname_char + "/status/moving/";                                    // Built topic to sent message to
   client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
   EEPROM.begin(4095);                                                                 // Define EEPROM
   EEPROM.put(30, pos);                                                                // Write "pos" to EEPROM
@@ -453,8 +467,22 @@ void MQTT_Handling() {
 // *** MQTT-Command: TEACH ******************************************************************************************************************************************************
   if (String(MQTTget_message) == "TEACH") {
     Serial.println("TEACH");                                                          // Debug printing
+    ausgabe = "Teach-Mode...";                                                        // Build strings to send to MQTT-Broker and send it                                                           // +++
+    top = topic + hostname_char + "/status/info/";                                    // Built topic to sent message to                                                                             // +++
+    client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message                                                                                       // +++
     teach_flag = true;                                                                // Set Teaching-Flag
   }
+// *** MQTT-Command: SETUP ******************************************************************************************************************************************************                   // +++
+  if (String(MQTTget_message) == "SETUP") {                                                                                                                                                         // +++
+    Serial.println("SETUP");                                                          // Debug printing                                                                                             // +++
+    ausgabe = "Setup started...";                                                     // Build strings to send to MQTT-Broker and send it                                                           // +++
+    top = topic + hostname_char + "/status/info/";                                    // Built topic to sent message to                                                                             // +++
+    client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message                                                                                       // +++
+    delay(5000);                                                                      // Delay for 5s                                                                                               // +++
+    WiFi.disconnect(true);                                                            // Set SSID and Password nul                                                                                  // +++
+    delay(1000);
+    ESP.restart();                                                                    // Reboot module                                                                                              // +++
+  }                                                                                                                                                                                                 // +++
 // *** MQTT-Command: STATUS *****************************************************************************************************************************************************    
   if (String(MQTTget_message) == "STATUS") {
     Serial.println("STATUS");                                                         // Debug printing
@@ -465,15 +493,24 @@ void MQTT_Handling() {
     ausgabe = String(rssi);                                                           // Build strings to send to MQTT-Broker and send it
     top = topic + hostname_char + "/status/rssi/";                                    // Built topic to sent message to
     client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message
+    ausgabe = String(ProgRevision);                                                   // Build strings to send to MQTT-Broker and send it
+    top = topic + hostname_char + "/status/revision/";                                // Built topic to sent message to
+    client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message    
   }
 // *** MQTT-Command: MANUAL_START ***********************************************************************************************************************************************    
   if (String(MQTTget_message) == "MANUAL_START") {
     Serial.println("MANUAL_START");                                                   // Debug printing
+    ausgabe = "Manual-Mode...";                                                       // Build strings to send to MQTT-Broker and send it                                                           // +++
+    top = topic + hostname_char + "/status/info/";                                    // Built topic to sent message to                                                                             // +++
+    client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message                                                                                       // +++
     manual_flag = true;                                                               // Set Manual-Flag
   }
 // *** MQTT-Command: MANUAL_STOP ************************************************************************************************************************************************    
   if (String(MQTTget_message) == "MANUAL_STOP") {
     Serial.println("MANUAL_STOP");                                                    // Debug printing
+    ausgabe = "Normal operation...";                                                  // Build strings to send to MQTT-Broker and send it                                                           // +++
+    top = topic + hostname_char + "/status/info/";                                    // Built topic to sent message to                                                                             // +++
+    client.publish(top.c_str(), ausgabe.c_str());                                     // Publish MQTT-Message                                                                                       // +++
     manual_flag = false;                                                              // Reset Manual-Flag
   }
 // *** MQTT-Command: <percentage value> *****************************************************************************************************************************************    
@@ -540,9 +577,6 @@ void ButtonHandling() {
     }
 // *** Teaching-Mode ************************************************************************************************************************************************************
     if (teach_flag) {                                                                 // If Teaching-Flag is set
-      ausgabe = "Teach me...";                                                        // Build strings to send to MQTT-Broker and send it
-      top = topic + hostname_char + "/status/teach/";                                 // Built topic to sent message to
-      client.publish(top.c_str(), ausgabe.c_str());                                   // Publish MQTT-Message
       down_time = 0;                                                                  // Reset Down-Time
       up_time = 0;                                                                    // Reset Up-Time
       // *** STEP 1: Wait until button is pressed ***
@@ -642,7 +676,7 @@ void ButtonHandling() {
         } else {                                                                      // If UP isn't pressed after 1s => start semi automatic mode
           StartPosCalcTime = millis();                                                // Set start time for Position-Calculation-Timer
           StartMoveTime = StartPosCalcTime;                                           // Set start time for Movement-Timer
-          moveUp();                                                                   // Open shutter
+//          moveUp();                                                                   // Open shutter
           drive = true;                                                               // Set Motion-Flag
           moving_up = true;                                                           // Set UP-Flag
         }
@@ -681,7 +715,7 @@ void ButtonHandling() {
         } else {                                                                      // If DOWN isn't pressed after 1s => start semi automatic mode
           StartPosCalcTime = millis();                                                // Set start time for Position-Calculation-Timer
           StartMoveTime = StartPosCalcTime;                                           // Set start time for Movement-Timer
-          moveDown();                                                                 // Close shutter
+//          moveDown();                                                                 // Close shutter
           drive = true;                                                               // Set Motion-Flag
           moving_down = true;                                                         // Set DOWN-Flag
         }
@@ -705,6 +739,7 @@ void MoveNow() {
     if (percentage) {                                                                 // If target value is a percentage value
       if (CurrentTime > StartMoveTime + (100 * (up_time / 100) * delta)) {            // Move as long as target value isn't reached
         pos = soll;                                                                   // If target value is reached, set new position
+        pos_fb = soll;                                                                                                                                                                              // +++
         motionStop();                                                                 // Stop motion
         drive = false;                                                                // Reset flags
         moving_up = false;
@@ -713,6 +748,7 @@ void MoveNow() {
     } else {                                                                          // If shutter should move to end position
       if (CurrentTime > StartMoveTime + ((100 * (up_time / 100) * pos) + 3000)){      // Move as long as end position isn't reached
         pos = 0;                                                                      // If end position is reached, set position to endposition
+        pos_fb = 0;                                                                                                                                                                                 // +++
         motionStop();                                                                 // Stop motion
         drive = false;                                                                // Reset flags
         moving_up = false;
@@ -730,6 +766,7 @@ void MoveNow() {
     if (percentage) {                                                                 // If target value is a percentage value
       if (CurrentTime > StartMoveTime + (100 * (down_time / 100) * delta)) {          // Move as long as target value isn't reached
         pos = soll;                                                                   // If target value is reached, set new position
+        pos_fb = soll;                                                                                                                                                                              // +++
         motionStop();                                                                 // Stop motion
         drive = false;                                                                // Reset flags
         moving_down = false;
@@ -738,6 +775,7 @@ void MoveNow() {
     } else {                                                                          // If shutter should move to end position
       if (CurrentTime > StartMoveTime + ((100 * (down_time / 100) * (100 - pos)) + 3000)){   // Move as long as end position isn't reached
         pos = 100;                                                                    // If end position is reached, set position to endposition
+        pos_fb = 100;                                                                                                                                                                               // +++
         motionStop();                                                                 // Stop motion
         drive = false;                                                                // Reset flags
         moving_down = false;
