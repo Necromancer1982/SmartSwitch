@@ -388,8 +388,8 @@ void motionStop() {
   top = topic + hostname_char + "/status/position/";                                  // Built topic to sent message to
   client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
   ausgabe = String(pos);                                                              // Build strings to send to MQTT-Broker and send it
-  top = topic + hostname_char + "/command/";                                          // Built topic to sent message to
-  client.publish(top.c_str(), ausgabe.c_str(), true);                                 // Publish MQTT-Message
+  //top = topic + hostname_char + "/command/";                                          // Built topic to sent message to
+  //client.publish(top.c_str(), ausgabe.c_str(), true);                                 // Publish MQTT-Message
   long rssi = WiFi.RSSI();                                                            // Get RSSI of WiFi-Connection
   ausgabe = String(rssi);                                                             // Build strings to send to MQTT-Broker and send it
   top = topic + hostname_char + "/status/rssi/";                                      // Built topic to sent message to
