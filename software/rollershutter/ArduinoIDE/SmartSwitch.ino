@@ -372,9 +372,10 @@ void moveDown() {
 // ### Stop shutter movement ####################################################################################################################################################
 // ##############################################################################################################################################################################
 void motionStop() {
-  digitalWrite(IO_O2, LOW);                                                           // Reset IO_O2 (power off relais)
+  digitalWrite(IO_O1, LOW);                                                           // Reset IO_O1 (power off relais - on motor)
   delay(200);                                                                         // Delay 200ms
-  digitalWrite(IO_O1, LOW);                                                           // Reset IO_O1 (power off relais)
+  digitalWrite(IO_O2, LOW);                                                           // Reset IO_O2 (power off relais - direction)
+  
   MovedTime = MovedTime - millis();                                                   // Calculate, how long motor was moving
   if (pos_fb > 100) {                                                                 // Position will be calculated during complete motion
     pos_fb = 100;                                                                     // so values <0 and >100 are possible (time-safeness to open/close completely)
