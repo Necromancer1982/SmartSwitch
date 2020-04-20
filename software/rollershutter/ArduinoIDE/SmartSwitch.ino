@@ -239,7 +239,7 @@ void setup() {
   hostname.toCharArray(hostname_char, 140);                                           // Transfer string "hostname" to char
   //wifi_station_set_hostname(hostname_char);                                         // Set station hostname
   WiFiManagerParameter custom_site("site", "Einsatzort", site, 128);                  // Define WIFI-Manager parameter "site"
-  WiFiManagerParameter custom_broker("boker", "MQTT-Borker", broker, 40);             // Define WIFI-Manager parameter "broker"
+  WiFiManagerParameter custom_broker("broker", "MQTT-Broker", broker, 40);             // Define WIFI-Manager parameter "broker"
   WiFiManager wifiManager;                                                            // Define WiFi Manager
   wifiManager.setSaveConfigCallback(saveConfigCallback);                              // Set callback in case, parameters should be saved
   wifiManager.addParameter(&custom_site);                                             // Add parameters to WIFI-Manager
