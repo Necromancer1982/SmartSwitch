@@ -221,7 +221,7 @@ void setup() {
   }
   if (isnan(pos)) {                                                                   // Check if EEPROM-Content "pos" is not a number
     Serial.println("NAN: pos!");                                                      // Debug printing
-    pos = 0.0;                                                                        // Set pos to 0.0
+    pos = 0.0f;                                                                        // Set pos to 0.0
     EEPROM.begin(4095);                                                               // Define EEPROM
     EEPROM.put(30, pos);                                                              // Write "pos" to EEPROM
     delay(200);                                                                       // Delay
@@ -239,7 +239,7 @@ void setup() {
   hostname.toCharArray(hostname_char, 140);                                           // Transfer string "hostname" to char
   //wifi_station_set_hostname(hostname_char);                                         // Set station hostname
   WiFiManagerParameter custom_site("site", "Einsatzort", site, 128);                  // Define WIFI-Manager parameter "site"
-  WiFiManagerParameter custom_broker("boker", "MQTT-Borker", broker, 40);             // Define WIFI-Manager parameter "broker"
+  WiFiManagerParameter custom_broker("broker", "MQTT-Broker", broker, 40);             // Define WIFI-Manager parameter "broker"
   WiFiManager wifiManager;                                                            // Define WiFi Manager
   wifiManager.setSaveConfigCallback(saveConfigCallback);                              // Set callback in case, parameters should be saved
   wifiManager.addParameter(&custom_site);                                             // Add parameters to WIFI-Manager
@@ -372,9 +372,10 @@ void moveDown() {
 // ### Stop shutter movement ####################################################################################################################################################
 // ##############################################################################################################################################################################
 void motionStop() {
-  digitalWrite(IO_O2, LOW);                                                           // Reset IO_O2 (power off relais)
+  digitalWrite(IO_O1, LOW);                                                           // Reset IO_O1 (power off relais - on motor)
   delay(200);                                                                         // Delay 200ms
-  digitalWrite(IO_O1, LOW);                                                           // Reset IO_O1 (power off relais)
+  digitalWrite(IO_O2, LOW);                                                           // Reset IO_O2 (power off relais - direction)
+  
   MovedTime = MovedTime - millis();                                                   // Calculate, how long motor was moving
   if (pos_fb > 100) {                                                                 // Position will be calculated during complete motion
     pos_fb = 100;                                                                     // so values <0 and >100 are possible (time-safeness to open/close completely)
@@ -387,8 +388,8 @@ void motionStop() {
   top = topic + hostname_char + "/status/position/";                                  // Built topic to sent message to
   client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
   ausgabe = String(pos);                                                              // Build strings to send to MQTT-Broker and send it
-  top = topic + hostname_char + "/command/";                                          // Built topic to sent message to
-  client.publish(top.c_str(), ausgabe.c_str(), true);                                 // Publish MQTT-Message
+  //top = topic + hostname_char + "/command/";                                          // Built topic to sent message to
+  //client.publish(top.c_str(), ausgabe.c_str(), true);                                 // Publish MQTT-Message
   long rssi = WiFi.RSSI();                                                            // Get RSSI of WiFi-Connection
   ausgabe = String(rssi);                                                             // Build strings to send to MQTT-Broker and send it
   top = topic + hostname_char + "/status/rssi/";                                      // Built topic to sent message to
@@ -396,11 +397,11 @@ void motionStop() {
   ausgabe = "STOP";                                                                   // Build strings to send to MQTT-Broker and send it
   top = topic + hostname_char + "/status/moving/";                                    // Built topic to sent message to
   client.publish(top.c_str(), ausgabe.c_str());                                       // Publish MQTT-Message
-  EEPROM.begin(4095);                                                                 // Define EEPROM
-  EEPROM.put(30, pos);                                                                // Write "pos" to EEPROM
-  delay(200);                                                                         // Delay
-  EEPROM.commit();                                                                    // Only needed for ESP8266 to get data written
-  EEPROM.end();                                                                       // Free RAM copy of structure
+  //EEPROM.begin(4095);                                                                 // Define EEPROM
+  //EEPROM.put(30, pos);                                                                // Write "pos" to EEPROM
+  //delay(200);                                                                         // Delay
+  //EEPROM.commit();                                                                    // Only needed for ESP8266 to get data written
+  //EEPROM.end();                                                                       // Free RAM copy of structure
 }
 
 // ##############################################################################################################################################################################
@@ -432,7 +433,7 @@ void MQTT_Handling() {
   if (String(MQTTget_message) == "UP") {
     Serial.println("UP");                                                             // Debug printing
     if (pos <= 0) {                                                                   // If shutter is already completely opened
-      pos = 0;                                                                        // Set position to 0
+      pos = 0.0f;                                                                        // Set position to 0
       return;                                                                         // Return
     }
     StartPosCalcTime = millis();                                                      // Set start time for Position-Calculation-Timer
@@ -446,7 +447,7 @@ void MQTT_Handling() {
   if (String(MQTTget_message) == "DOWN") {
     Serial.println("DOWN");                                                           // Debug printing
     if (pos >= 100) {                                                                 // If shutter is already completely closed
-      pos = 100;                                                                      // Set position to 100
+      pos = 100.0f;                                                                      // Set position to 100
       return;                                                                         // Return
     }
     StartPosCalcTime = millis();                                                      // Set start time for Position-Calculation-Timer
@@ -645,7 +646,7 @@ void ButtonHandling() {
     if(!teach_flag && !manual_flag) {                                                 // If no special flag (either teach or manual) is set
       if (!digitalRead(IO_I1)) {                                                      // If UP is pressed
         if (pos <= 0) {                                                               // If Shutter is already completly opened
-          pos = 0;                                                                    // Position is 0
+          pos = 0.0f;                                                                    // Position is 0
           return;                                                                     // Return
         }
         moveUp();                                                                     // Otherwise open shutter
@@ -654,7 +655,7 @@ void ButtonHandling() {
         for (int i = 1; i <= 10; i++) {                                               // Do for one second
           delay(100);                                                                 // Every tenth of a second
           if (pos <= 0) {                                                             // If Shutter is already completly opened
-            pos = 0;                                                                  // Position is 0
+            pos = 0.0f;                                                                  // Position is 0
             motionStop();                                                             // Stop motion
             return;                                                                   // Return
           } else {                                                                    // Else
@@ -665,7 +666,7 @@ void ButtonHandling() {
           do {                                                                        // As long as button is still pressed do
             delay(100);                                                               // Delay for 100ms
             if (pos <= 0) {                                                           // If shutter is already totally opened
-              pos = 0;                                                                // Position = 0
+              pos = 0.0f;                                                                // Position = 0
               motionStop();                                                           // Stop motion
               return;                                                                 // Return
             } else {                                                                  // If shutter isn't opened
@@ -684,7 +685,7 @@ void ButtonHandling() {
       }
       if (!digitalRead(IO_I2)) {                                                      // If DOWN is pressed
         if (pos >= 100) {                                                             // If shutter is already completly closed
-          pos = 100;                                                                  // Position = 100
+          pos = 100.0f;                                                                  // Position = 100
           return;                                                                     // Return
         }
         moveDown();                                                                   // Otherwise close shutter
@@ -693,7 +694,7 @@ void ButtonHandling() {
         for (int i = 1; i <= 10; i++) {                                               // Do for one second:
           delay(100);                                                                 // Every tenth of a second
           if (pos >= 100) {                                                           // If shutter is already compleatly closed
-            pos = 100;                                                                // Position = 100
+            pos = 100.0f;                                                                // Position = 100
             motionStop();                                                             // Stop Motion
             return;                                                                   // Return
           } else {                                                                    // Else
@@ -704,7 +705,7 @@ void ButtonHandling() {
           do {                                                                        // As long as button is still pressed do
             delay(100);                                                               // Delay for 100ms
             if (pos >= 100) {                                                         // If shutter is already totaly closed
-              pos = 100;                                                              // Position = 100
+              pos = 100.0f;                                                              // Position = 100
               motionStop();                                                           // Stop motion
               return;                                                                 // Return
             } else {                                                                  // If shutter isn't closed
@@ -747,7 +748,7 @@ void MoveNow() {
       }
     } else {                                                                          // If shutter should move to end position
       if (CurrentTime > StartMoveTime + ((100 * (up_time / 100) * pos) + 3000)){      // Move as long as end position isn't reached
-        pos = 0;                                                                      // If end position is reached, set position to endposition
+        pos = 0.0f;                                                                      // If end position is reached, set position to endposition
         pos_fb = 0;                                                                                                                                                                                 // +++
         motionStop();                                                                 // Stop motion
         drive = false;                                                                // Reset flags
