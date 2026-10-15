@@ -426,6 +426,9 @@ void MQTT_Handling() {
   if (drive) {                                                                        // If shutter is already moving
     motionStop();                                                                     // Stop motion
     drive = false;                                                                    // Reset Driving-Flag
+    moving_up = false;                                                                // Reset UP-Flag
+    moving_down = false;                                                              // Reset DOWN-Flag
+    percentage = false;                                                               // Reset Percentage-Flag
     delay(500);                                                                       // Delay 500ms
   }
 // *** MQTT-Command: UP *********************************************************************************************************************************************************    
@@ -463,6 +466,7 @@ void MQTT_Handling() {
     drive = false;                                                                    // Reset Driving-Flag
     moving_up = false;                                                                // Reset UP-Flag
     moving_down = false;                                                              // Reset DOWN-FLAG
+    percentage = false;                                                               // Reset Percentage-Flag
   }
 // *** MQTT-Command: TEACH ******************************************************************************************************************************************************
   if (String(MQTTget_message) == "TEACH") {
